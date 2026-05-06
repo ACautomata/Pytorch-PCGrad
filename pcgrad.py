@@ -8,6 +8,15 @@ import copy
 import random
 
 
+class PCGradObjectives(list):
+    def __init__(self, optimizer, objectives):
+        super().__init__(objectives)
+        self._optimizer = optimizer
+
+    def backward(self):
+        return self._optimizer.pc_backward(self)
+
+
 class PCGrad():
     def __init__(self, optimizer, reduction='mean'):
         self._optim, self._reduction = optimizer, reduction
@@ -17,19 +26,58 @@ class PCGrad():
     def optimizer(self):
         return self._optim
 
-    def zero_grad(self):
+    @property
+    def param_groups(self):
+        return self._optim.param_groups
+
+    @param_groups.setter
+    def param_groups(self, param_groups):
+        self._optim.param_groups = param_groups
+
+    @property
+    def state(self):
+        return self._optim.state
+
+    @state.setter
+    def state(self, state):
+        self._optim.state = state
+
+    @property
+    def defaults(self):
+        return self._optim.defaults
+
+    @defaults.setter
+    def defaults(self, defaults):
+        self._optim.defaults = defaults
+
+    def __getattr__(self, name):
+        return getattr(self._optim, name)
+
+    def add_param_group(self, param_group):
+        return self._optim.add_param_group(param_group)
+
+    def load_state_dict(self, state_dict):
+        return self._optim.load_state_dict(state_dict)
+
+    def state_dict(self):
+        return self._optim.state_dict()
+
+    def objectives(self, objectives):
+        return PCGradObjectives(self, objectives)
+
+    def zero_grad(self, set_to_none=True):
         '''
         clear the gradient of the parameters
         '''
 
-        return self._optim.zero_grad(set_to_none=True)
+        return self._optim.zero_grad(set_to_none=set_to_none)
 
-    def step(self):
+    def step(self, closure=None):
         '''
         update the parameters with the gradient
         '''
 
-        return self._optim.step()
+        return self._optim.step(closure=closure)
 
     def pc_backward(self, objectives):
         '''
@@ -79,6 +127,9 @@ class PCGrad():
                 p.grad = grads[idx]
                 idx += 1
         return
+
+    def __call__(self, objectives):
+        return self.objectives(objectives)
 
     def _pack_grad(self, objectives):
         '''
