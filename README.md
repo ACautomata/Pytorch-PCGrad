@@ -5,7 +5,7 @@ This repository provide code of reimplementation for [Gradient Surgery for Multi
 ## Setup
 Install the required packages via:
 ```
-pip install -r requirements.txt
+pip install -e .
 ```
 
 ## Usage
@@ -14,7 +14,7 @@ pip install -r requirements.txt
 import torch
 import torch.nn as nn
 import torch.optim as optim
-from pcgrad import PCGrad
+from pytorch_pcgrad import PCGrad
 
 # wrap your favorite optimizer
 optimizer = PCGrad(optim.Adam(net.parameters()))
