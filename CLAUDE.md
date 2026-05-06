@@ -15,28 +15,28 @@ The only full training script is `main_multi_mnist.py`. It builds a Multi-MNIST 
 Install dependencies:
 
 ```bash
-python3 -m pip install -e .
+conda run -n pcgrad-test python -m pip install -e .
 ```
 
 Run the Multi-MNIST training script:
 
 ```bash
-python3 main_multi_mnist.py
+conda run -n pcgrad-test python main_multi_mnist.py
 ```
 
 Run the lightweight PCGrad self-check embedded in `src/pytorch_pcgrad/pcgrad.py`:
 
 ```bash
-python3 src/pytorch_pcgrad/pcgrad.py
+conda run -n pcgrad-test python src/pytorch_pcgrad/pcgrad.py
 ```
 
 Run a syntax check across the repository:
 
 ```bash
-python3 -m compileall src main_multi_mnist.py depreciate
+conda run -n pcgrad-test python -m compileall src main_multi_mnist.py depreciate
 ```
 
-The project uses `pyproject.toml` with hatchling as its build backend. There is no configured test runner, lint command, or CI workflow in this repository. Use targeted script execution and `compileall` for verification unless you add a dedicated test setup.
+The project uses `pyproject.toml` with hatchling as its build backend. There is no configured test runner, lint command, or CI workflow in this repository. Use the `pcgrad-test` conda environment with targeted script execution and `compileall` for verification unless you add a dedicated test setup.
 
 ## Development notes
 
