@@ -1,0 +1,22 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "pytorch-pcgrad"
+version = "0.1.0"
+description = "PyTorch reimplementation of PCGrad for multi-task learning"
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.8"
+dependencies = [
+    "six",
+    "torch",
+    "torchvision",
+]
+
+[project.urls]
+Repository = "https://github.com/WeiChengTseng/Pytorch-PCGrad"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/pytorch_pcgrad"]
