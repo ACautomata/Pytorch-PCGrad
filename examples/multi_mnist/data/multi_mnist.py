@@ -9,7 +9,6 @@ import errno
 import numpy as np
 import torch
 import codecs
-import scipy.misc as m
 
 
 class MultiMNIST(data.Dataset):
@@ -143,10 +142,8 @@ class MultiMNIST(data.Dataset):
 
     def download(self):
         """Download the MNIST data if it doesn't exist in processed_folder already."""
-        # from six.moves import urllib
-        import urllib
-        # import urllib2 as urllib
         import gzip
+        import urllib.request
 
         if self._check_exists() and self._check_multi_exists():
             return
@@ -250,8 +247,8 @@ def read_label_file(path, extension):
         assert get_int(data[:4]) == 2049
         length = get_int(data[4:8])
         parsed = np.frombuffer(data, dtype=np.uint8, offset=8)
-        multi_labels_l = np.zeros((1 * length), dtype=np.long)
-        multi_labels_r = np.zeros((1 * length), dtype=np.long)
+        multi_labels_l = np.zeros((1 * length), dtype=np.int64)
+        multi_labels_r = np.zeros((1 * length), dtype=np.int64)
         for im_id in range(length):
             for rim in range(1):
                 multi_labels_l[1 * im_id + rim] = parsed[im_id]

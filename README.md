@@ -3,9 +3,14 @@
 This repository provide code of reimplementation for [Gradient Surgery for Multi-Task Learning](https://arxiv.org/pdf/2001.06782.pdf) in PyTorch 1.6.0. 
 
 ## Setup
-Install the required packages via:
+Install the core package via:
 ```
 pip install -e .
+```
+
+`requirements.txt` and the core install only cover the reusable PCGrad package. Install the Multi-MNIST example dependencies via:
+```
+pip install -e '.[examples]'
 ```
 
 ## Usage
@@ -36,11 +41,11 @@ optimizer.step()
 
 `PCGrad` is fully compatible with the `torch.optim.Optimizer` interface — `state_dict()`, `load_state_dict()`, `param_groups`, `state`, `defaults`, and `add_param_group()` are all transparently forwarded to the wrapped optimizer.
 
-## Training
+## Examples
 - Mulit-MNIST 
-  Please run the training script via the following command. Part of implementation is leveraged from https://github.com/intel-isl/MultiObjectiveOptimization
+  Please run the example training script via the following command. Part of implementation is leveraged from https://github.com/intel-isl/MultiObjectiveOptimization
   ```
-  python main_multi_mnist.py
+  python examples/multi_mnist/main.py
   ```
   The result is shown below.
   | Method                  | left-digit | right-digit |
