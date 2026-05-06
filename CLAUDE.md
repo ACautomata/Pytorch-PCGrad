@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project overview
 
-This repository is a compact PyTorch reimplementation of PCGrad from “Gradient Surgery for Multi-Task Learning.” The main reusable component is `PCGrad` in `pcgrad.py`, which wraps an existing `torch.optim` optimizer and exposes the normal `zero_grad()` / `step()` flow plus `pc_backward(objectives)` for a list of per-task losses.
+This repository is a compact PyTorch reimplementation of PCGrad from “Gradient Surgery for Multi-Task Learning.” The main reusable component is `PCGrad` in `pcgrad.py`, which wraps an existing `torch.optim` optimizer and exposes the normal `zero_grad()` / `step()` flow plus `pc_backward(objectives)` for a list of per-task losses. `PCGrad` is fully compatible with the `torch.optim.Optimizer` interface — it transparently forwards `param_groups`, `state`, `defaults`, `state_dict()`, `load_state_dict()`, and `add_param_group()` to the wrapped optimizer. An `objectives()` wrapper returns a `PCGradObjectives` (a `list` subclass) whose `.backward()` routes to `pc_backward`. `__call__` is aliased to `objectives()` as a shorthand.
 
 The only full training script is `main_multi_mnist.py`. It builds a Multi-MNIST experiment by composing three modules: a shared representation network (`MultiLeNetR`) and two task-specific output heads (`MultiLeNetO`) from `net/lenet.py`. The script creates the Multi-MNIST dataset via `data/multi_mnist.py`, wraps an Adam optimizer with `PCGrad`, computes left/right digit losses separately, and calls `optimizer.pc_backward(losses)` before `optimizer.step()`.
 
@@ -42,6 +42,8 @@ There is no configured test runner, lint command, package metadata, or CI workfl
 
 - The README targets PyTorch 1.6.0 behavior. Be careful with API changes in modern PyTorch/torchvision when editing dataset loading, `torch.load`, or optimizer gradient handling.
 - `PCGrad.pc_backward()` expects a list of task losses from the same forward graph and calls backward once per objective with `retain_graph=True`.
+- `PCGrad` proxies `param_groups`, `state`, `defaults` (with setters), `state_dict()`, `load_state_dict()`, `add_param_group()`, and uses `__getattr__` to fall through to the wrapped optimizer for any other attribute. `step(closure=None)` and `zero_grad(set_to_none=True)` match PyTorch optimizer semantics.
+- `PCGradObjectives` is a `list` subclass with a `.backward()` method that delegates to `optimizer.pc_backward(self)`. Created via `optimizer.objectives(losses)` or `optimizer(losses)`.
 - `PCGrad._retrieve_grad()` preserves parameters without gradients by inserting zero tensors and a `has_grad` mask, which matters for multi-head architectures where task-specific heads do not all receive every loss.
 - `main_multi_mnist.py` stores experiment hyperparameters as top-level constants (`PATH`, `LR`, `BATCH_SIZE`, `NUM_EPOCHS`, `TASKS`, `DEVICE`) rather than command-line arguments.
 

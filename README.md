@@ -17,12 +17,24 @@ import torch.optim as optim
 from pcgrad import PCGrad
 
 # wrap your favorite optimizer
-optimizer = PCGrad(optim.Adam(net.parameters())) 
+optimizer = PCGrad(optim.Adam(net.parameters()))
 losses = [...] # a list of per-task losses
 assert len(losses) == num_tasks
-optimizer.pc_backward(losses) # calculate the gradient can apply gradient modification
+optimizer.zero_grad()
+optimizer.pc_backward(losses)  # calculate the gradient and apply gradient modification
 optimizer.step()  # apply gradient step
 ```
+
+You can also use the `objectives` wrapper for a `backward`-style call:
+
+```python
+optimizer.zero_grad()
+losses = optimizer.objectives([loss1, loss2])
+losses.backward()
+optimizer.step()
+```
+
+`PCGrad` is fully compatible with the `torch.optim.Optimizer` interface — `state_dict()`, `load_state_dict()`, `param_groups`, `state`, `defaults`, and `add_param_group()` are all transparently forwarded to the wrapped optimizer.
 
 ## Training
 - Mulit-MNIST 
