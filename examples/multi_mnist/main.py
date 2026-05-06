@@ -1,14 +1,12 @@
-import torch
-import torchvision
-import torch.nn as nn
-import torch.nn.functional as F
-import pdb
 import numpy as np
+import torch
+import torch.nn.functional as F
 from torchvision import transforms
-from pytorch_pcgrad.data.multi_mnist import MultiMNIST
-from pytorch_pcgrad.net.lenet import MultiLeNetR, MultiLeNetO
-from pytorch_pcgrad.pcgrad import PCGrad
-from pytorch_pcgrad.utils import create_logger
+
+from data.multi_mnist import MultiMNIST
+from net.lenet import MultiLeNetR, MultiLeNetO
+from pytorch_pcgrad import PCGrad
+from utils import create_logger
 
 # ------------------ CHANGE THE CONFIGURATION -------------
 PATH = './dataset'
