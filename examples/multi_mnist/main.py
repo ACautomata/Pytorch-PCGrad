@@ -66,7 +66,7 @@ for ep in range(NUM_EPOCHS):
         out_r, mask_r = nets['R'](rep, None)
 
         losses = [F.nll_loss(out_l, label_l), F.nll_loss(out_r, label_r)]
-        optimizer.pc_backward(losses)
+        optimizer(losses).backward()
         # sum(losses).backward()
         optimizer.step()
 

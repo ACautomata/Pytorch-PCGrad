@@ -26,7 +26,7 @@ optimizer = PCGrad(optim.Adam(net.parameters()))
 losses = [...] # a list of per-task losses
 assert len(losses) == num_tasks
 optimizer.zero_grad()
-optimizer.pc_backward(losses)  # calculate the gradient and apply gradient modification
+optimizer(losses).backward()  # calculate the gradient and apply gradient modification
 optimizer.step()  # apply gradient step
 ```
 
