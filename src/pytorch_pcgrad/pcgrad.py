@@ -11,7 +11,7 @@ class PCGradObjectives(list):
         self._optimizer = optimizer
 
     def backward(self):
-        return self._optimizer.pc_backward(self)
+        return self._optimizer._backward(self)
 
 
 class PCGrad():
@@ -76,7 +76,7 @@ class PCGrad():
 
         return self._optim.step(closure=closure)
 
-    def pc_backward(self, objectives):
+    def _backward(self, objectives):
         '''
         calculate the gradient of the parameters
 

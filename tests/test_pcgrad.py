@@ -29,7 +29,7 @@ class MultiHeadTestNet(nn.Module):
 
 
 class PCGradTest(unittest.TestCase):
-    def test_pc_backward_sets_gradients_for_shared_network(self):
+    def test_backward_sets_gradients_for_shared_network(self):
         torch.manual_seed(4)
         x, y = torch.randn(2, 3), torch.randn(2, 4)
         net = TestNet()
@@ -38,11 +38,11 @@ class PCGradTest(unittest.TestCase):
         losses = [nn.L1Loss()(y_pred, y), nn.MSELoss()(y_pred, y)]
 
         optimizer.zero_grad()
-        optimizer.pc_backward(losses)
+        optimizer(losses).backward()
 
         self.assertTrue(all(p.grad is not None for p in net.parameters()))
 
-    def test_pc_backward_handles_task_specific_heads(self):
+    def test_backward_handles_task_specific_heads(self):
         torch.manual_seed(4)
         x, y = torch.randn(2, 3), torch.randn(2, 4)
         net = MultiHeadTestNet()
@@ -51,11 +51,11 @@ class PCGradTest(unittest.TestCase):
         losses = [nn.MSELoss()(y_pred_1, y), nn.MSELoss()(y_pred_2, y)]
 
         optimizer.zero_grad()
-        optimizer.pc_backward(losses)
+        optimizer(losses).backward()
 
         self.assertTrue(all(p.grad is not None for p in net.parameters()))
 
-    def test_objectives_backward_delegates_to_pc_backward(self):
+    def test_objectives_backward_calls_backward(self):
         torch.manual_seed(4)
         x, y = torch.randn(2, 3), torch.randn(2, 4)
         net = TestNet()
@@ -87,7 +87,7 @@ class PCGradTest(unittest.TestCase):
         losses = [param.sum(), (2 * param).sum()]
 
         optimizer.zero_grad()
-        optimizer.pc_backward(losses)
+        optimizer(losses).backward()
 
         torch.testing.assert_close(param.grad, torch.tensor([1.5, 1.5]))
 
@@ -97,7 +97,7 @@ class PCGradTest(unittest.TestCase):
         losses = [param.sum(), (2 * param).sum()]
 
         optimizer.zero_grad()
-        optimizer.pc_backward(losses)
+        optimizer(losses).backward()
 
         torch.testing.assert_close(param.grad, torch.tensor([3.0, 3.0]))
 
